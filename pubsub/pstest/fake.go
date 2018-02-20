@@ -564,6 +564,10 @@ func (s *subscription) deliver() {
 	// Try to deliver each remaining message.
 	curIndex := 0
 	for _, m := range s.msgs {
+		// Don't try to re-deliver message while it is outstanding.
+		if m.outstanding() {
+			continue
+		}
 		// If the message was never delivered before, start with the stream at
 		// curIndex. If it was delivered before, start with the stream after the one
 		// that owned it.
